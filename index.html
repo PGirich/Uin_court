@@ -39,10 +39,10 @@
 </div>
 <div id="border">
   <p class="name">Укажите регистрационный номер входящего запроса суда о предоставлении УИН для получения УИН, или УИН для получения номера запроса суда</p>
-  <label for="editboxIP">Вх.№ запроса: </label>
+  <label for="editboxNo">Вх.№ запроса: </label>
   <input
     type="text"
-    id="editboxIP"
+    id="editboxNo"
     value="123456/06/24000"
     placeholder="n..n/yy/rr000"
   />
@@ -83,19 +83,17 @@
   function getUin(lninp) {
     // Выделяем фрагменты номера
     var aln = lninp.toUpperCase().trim().split('/');
-    var docNo = '';
-    var docYr = '';
-    var docDep = aln2[0];
-    if (aln.length > 0) docNo = aln[0];
-    if (aln.length > 1) docYr = aln[1];
-    if (aln.length > 2) docDep = aln2[0];
+    var docNo = aln[0];
+    var docYr = aln[1];
+    var docDep = aln[2];
     // Простейшая валидация элементов номера
     var invalidNo =
       Number(docNo) < 1 ||
       Number(docNo) > 9999999 ||
       !(docYr.length == 2) ||
+      !(docDep.length == 5) ||
       !(docDep.length == 5);
-    var uin = 'Неверно указан номер исполнительного производства '; //+ipno+' '+ipyr+' '+ipdp1+' '+ipdp2 ;
+    var uin = 'Неверно указан номер регистрационный номер входящего запроса суда'; //+ipno+' '+ipyr+' '+ipdp1+' '+ipdp2 ;
     // Для валидного номера ИП рассчитываем УИН
     if (!invalidNo) {
       var uin19 = '322' + docDep + docYr + ('0000' + docNo).slice(-7) + '11';
@@ -167,7 +165,7 @@
   // установка обработчиков событий
   document
     .getElementById('editboxNo')
-    .addEventListener('input', handleInputBoxIP, false);
+    .addEventListener('input', handleInputBoxNo, false);
   document
     .getElementById('editboxUIN')
     .addEventListener('input', handleInputBoxUIN, false);
