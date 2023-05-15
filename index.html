@@ -94,21 +94,17 @@
   //===========================
   // Получить УИН по номеру
   function getUin(lninp) {
-    // Выделяем фрагменты номера
-    var aln = lninp.toUpperCase().trim().split('/');
-    var docNo = aln[0];
-    var docYr = aln[1];
-    var docDep = aln[2];
-    // Простейшая валидация элементов номера
-    var invalidNo =
-      Number(docNo) < 1 ||
-      Number(docNo) > 9999999 ||
-      !(docYr.length == 2) ||
-      !(docDep.substring(2,5) == '000') ||
-      !(docDep.length == 5);
+    // валидация элементов номера
+    const valRegExp = /\d{1,7}\/2\d{1}\/\d{2}000/g
+    var validNo = valRegExp.exec(lninp);
     var uin = 'Неверно указан номер регистрационный номер входящего запроса суда'; //+ipno+' '+ipyr+' '+ipdp1+' '+ipdp2 ;
     // Для валидного номера ИП рассчитываем УИН
-    if (!invalidNo) {
+    if (validNo) {
+    // Выделяем фрагменты номера
+      var aln = validNo[0].toUpperCase().trim().split('/');
+      var docNo = aln[0];
+      var docYr = aln[1];
+      var docDep = aln[2];
       var uin19 = '322' + docDep + docYr + ('0000000' + docNo).slice(-7) + '11';
       var crc = getControlSum(uin19, 1);
       if (crc == 10) {
