@@ -35,6 +35,8 @@
     <a href="https://fssp.gov.ru/mvv_fssp/">сайте ФССП России</a>. Согласно
     данных требований для формирования УИН достаточно знания регистрационного номера, присвоенного территориальным органом ФССП России - администратором дохода, запроса суда в формате n..n/yy/rr000.</p>
 </div>
+<div id="outline"><br><b>ВЕРСИЯ ДЛЯ РАБОТНИКОВ ФССП РОССИИ </b>
+</div>
 <div id="border">
   <p class="name">Укажите регистрационный номер входящего запроса суда о предоставлении УИН для получения УИН, или УИН для получения номера запроса суда</p>
   <label for="editboxNo">Вх.№ запроса: </label>
@@ -68,6 +70,58 @@
   5. Дождаться предъявления судебного акта на принудиительное исполнение в один из отделов судебных приставов и возбуждения исполнительного производства. Отметить, что АИС ФССП России в день возбуждения или на следующий день автоматически сформирует начисление в ГИС ГМП и на ЕПГУ появится возможность оплаты по данному УИН
 </p>
 </div>
+
+<div id="outline"><br><b>ВЕРСИЯ ДЛЯ РАБОТНИКОВ СУДА </b>
+</div>
+<div id="border">
+<p class="name">Укажите порядковый номер дела, год регистрации и код суда для получения УИН, или УИН для получения номера дела, года регистрации и кода суда</p>
+<label for="editboxActNo">№ дела: </label>
+<input
+  type="text"
+  id="editboxActNo"
+  value="1"
+  placeholder="n..n"
+/>
+<button id="buttonGetNo">Получить</button>
+<label for="editboxActYr">Год (2 цифры) </label>
+<input
+  type="text"
+  id="editboxActYr"
+  value="23"
+  placeholder="yy"
+/>
+<label for="editboxActCo">Код суда: </label>
+<input
+  type="text"
+  id="editboxActCo"
+  value="77OS0000"
+  placeholder="rrccnnnn"
+/>
+<><br>
+<label for="editboxActUIN">УИН суд.акта: </label>
+<input
+  type="text"
+  id="editboxActUIN"
+  value=""
+  placeholder="322....00 (20 цифр)"
+/>
+<br>
+</div>
+
+<div id="outline">
+<p>
+  Порядок действий для получения УИН при изготовлении судебного акта, администрируемого ФССП России, в случае его вынесения не на основании материалов, направленных ФССП России, органами прокуратуры (в материалах в этом случае присутствует УИН и его получение не требуется)
+</p>
+<p>
+  1. Указать год регистрации изготавливаемого акта, код суда (значение имеют первые 2 цифры)<br>
+  2. Один раз нажать на кнопку "Получить". При повторных нажатиях будут сформированы новые номер и номерное пространство (1-9999999) может быть исчерпано<br>
+  3. Включить полученный УИН в состав изготавливаемого акта<br>  
+  4. Принять к сведению, что, несмотря на предоставление УИН, начисление в ГИС ГМП не будет сформировано ФССП России и на ЕПГУ не появится возможность оплаты по данному УИН<br>
+  5. При предъявлении судебного акта на принудиительное исполнение в один из отделов судебных приставов и возбуждения исполнительного производства АИС ФССП России в день возбуждения или на следующий день автоматически сформирует начисление в ГИС ГМП и на ЕПГУ появится возможность оплаты по данному УИН
+</p>
+</div>
+
+
 
 
 
@@ -153,6 +207,32 @@
     detectUINType();
   }
 
+  function handleInputBoxAct(evt) {
+    var ln = 
+    document.getElementById('editboxActNo').value+'/'+
+    document.getElementById('editboxActYr').value+'/'+
+    document.getElementById('editboxActCo').value.substr(0,2)+'000';
+    document.getElementById('labelUINType').innerHTML = ln;
+    document.getElementById('editboxActUIN').value = getUin(ln);
+  }
+  function handleInputBoxActUIN(evt) {
+    var ln = evt.target.value;
+    document.getElementById('editboxActNo').value = ln.substring(10, 17).replace(/^0+/, '');
+    document.getElementById('editboxActYr').value = ln.substring(8, 10);
+    document.getElementById('editboxActCo').value = ln.substring(3, 5)+'******';
+  }
+
+  function handleButtonGetNo(evt) {
+    var key =
+      document.getElementById('editboxActYr').value+'|'+
+      document.getElementById('editboxActCo').value.substr(0,2);
+    // тут должен быть код для получения уникального (глобально для всех пользователей в пределах данного ключа) порядкового номера начиная с "1" по данному ключу
+    document.getElementById('editboxActNo').value = 0; // уникальный номер
+    handleInputBoxAct(evt);
+  }
+
+
+
   // тело скрипта
 
   // определяем массив видов начисление
@@ -178,5 +258,23 @@
   document
     .getElementById('editboxUIN')
     .addEventListener('input', handleInputBoxUIN, false);
+
+  document
+    .getElementById('editboxActNo')
+    .addEventListener('input', handleInputBoxAct, false);
+  document.getElementById("editboxActNo").disabled = true;
+  document
+    .getElementById('editboxActYr')
+    .addEventListener('input', handleInputBoxAct, false);
+  document
+    .getElementById('editboxActCo')
+    .addEventListener('input', handleInputBoxAct, false);
+  document
+    .getElementById('editboxActUIN')
+    .addEventListener('input', handleInputBoxActUIN, false);
+  document
+    .getElementById('buttonGetNo')
+    .addEventListener('click', handleButtonGetNo, false);
+
 
 </script>
